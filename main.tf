@@ -24,7 +24,7 @@ module "compute" {
   environment      = "production"
   api_versions     = ["/api/v1", "/api/v2"]
   backend_endpoint = "http://example-backend:8080"
-  instance_type = "t3-micro"
+  instance_type = "t2-micro"
   
   ec2_security_group_id = module.network.security_group_id
   private_subnet_id = module.network.private_subnet_id
