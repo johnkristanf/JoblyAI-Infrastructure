@@ -1,3 +1,8 @@
+resource "aws_api_gateway_vpc_link" "main" {
+  name = "api-gateway-vpc-link"
+  target_arns = [aws_instance.main.primary_network_interface_id]
+}
+
 resource "aws_api_gateway_rest_api" "main" {
   name        = "backend-api-${var.environment}"
   description = "REST API Gateway for application"
@@ -37,8 +42,9 @@ resource "aws_api_gateway_integration" "get_users" {
   resource_id = aws_api_gateway_resource.users_versioned[each.value].id
   http_method = aws_api_gateway_method.get_users[each.value].http_method
 
+  uri                     = "http://${aws_instance.main.private_ip}:80"
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "${var.backend_endpoint}/${each.value}/users"
-
+  connection_type = "VPC_LINK"
+  connection_id = aws_api_gateway_vpc_link.main.id
 }
