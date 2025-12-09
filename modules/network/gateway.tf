@@ -25,6 +25,7 @@ resource "aws_nat_gateway" "main" {
   depends_on = [aws_internet_gateway.main]
 }
 
+# For outbound only configurations
 resource "aws_route" "private_nat" {
   route_table_id         = aws_route_table.private.id
   destination_cidr_block = "0.0.0.0/0"

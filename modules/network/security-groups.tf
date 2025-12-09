@@ -1,7 +1,6 @@
 # When using API Gateway as a front door to a private EC2 instance, inbound HTTPS (443) ingress
 # is NOT required unless you want to access the EC2 instance directly from the outside.
 # Typically, you only need to allow inbound from internal sources or the load balancer/ALB/integration used by API Gateway.
-# Remove HTTP/HTTPS open to the world. Allow as restrictive as possible.
 
 resource "aws_security_group" "ec2" {
   name        = "ec2-sg"
