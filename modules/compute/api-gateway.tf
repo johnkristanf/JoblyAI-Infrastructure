@@ -1,50 +1,60 @@
-resource "aws_api_gateway_vpc_link" "main" {
-  name = "api-gateway-vpc-link"
-  target_arns = [aws_instance.main.primary_network_interface_id]
+# Cloud Map service
+resource "aws_service_discovery_private_dns_namespace" "main" {
+  name = "internal"
+  vpc  = aws_vpc.main.id
+  description = "Private DNS namespace for service discovery"
 }
 
-resource "aws_api_gateway_rest_api" "main" {
-  name        = "backend-api-${var.environment}"
-  description = "REST API Gateway for application"
+resource "aws_service_discovery_service" "main" {
+  name = "ec2-backend"
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.main.id
+    dns_records {
+      type = "A"
+      ttl  = 10
+    }
+    routing_policy = "MULTIVALUE"
+  }
 }
 
-resource "aws_api_gateway_resource" "version" {
-  for_each = toset(var.api_versions)
+resource "aws_service_discovery_instance" "main" {
+  instance_id = aws_instance.main.id
+  service_id  = aws_service_discovery_service.main.id
 
-  rest_api_id = aws_api_gateway_rest_api.rest_api.id
-  parent_id   = aws_api_gateway_rest_api.rest_api.root_resource_id
-  path_part   = each.value
+  attributes = {
+    AWS_INSTANCE_IPV4 = aws_instance.main.private_ip
+    AWS_INSTANCE_PORT = "80"
+  }
 }
 
-resource "aws_api_gateway_resource" "users_versioned" {
-  for_each = toset(var.api_versions)
-
-  rest_api_id = aws_api_gateway_rest_api.main.id
-  parent_id   = aws_api_gateway_resource.version[each.value].id
-  path_part   = "users"
+resource "aws_apigatewayv2_vpc_link" "main" {
+  name               = "http-api-vpc-link"
+  subnet_ids         = aws_subnet.private[*].id
+  security_group_ids = [aws_security_group.api_gw_to_ec2.id]
 }
 
-
-# GET /v1/users, GET /v2/users
-resource "aws_api_gateway_method" "get_users" {
-  for_each = toset(var.api_versions)
-
-  rest_api_id   = aws_api_gateway_rest_api.main.id
-  resource_id   = aws_api_gateway_resource.users_versioned[each.value].id
-  http_method   = "GET"
-  authorization = "NONE"
+resource "aws_apigatewayv2_api" "main" {
+  name          = "backend-http-api-${var.environment}"
+  protocol_type = "HTTP"
+  description   = "HTTP API Gateway for application using Cloud Map"
 }
 
-resource "aws_api_gateway_integration" "get_users" {
-  for_each = toset(var.api_versions)
+resource "aws_apigatewayv2_route" "users" {
+  for_each     = toset(var.api_versions)
+  api_id       = aws_apigatewayv2_api.main.id
+  route_key    = "GET /${each.value}/users"
+  target       = "integrations/${aws_apigatewayv2_integration.users[each.value].id}"
+}
 
-  rest_api_id = aws_api_gateway_rest_api.main.id
-  resource_id = aws_api_gateway_resource.users_versioned[each.value].id
-  http_method = aws_api_gateway_method.get_users[each.value].http_method
-
-  uri                     = "http://${aws_instance.main.private_ip}:80"
-  type                    = "HTTP_PROXY"
-  integration_http_method = "GET"
-  connection_type = "VPC_LINK"
-  connection_id = aws_api_gateway_vpc_link.main.id
+resource "aws_apigatewayv2_integration" "users" {
+  for_each                = toset(var.api_versions)
+  api_id                  = aws_apigatewayv2_api.main.id
+  integration_type        = "HTTP"
+  integration_method      = "GET"
+  integration_uri         = "http://ec2-backend.internal:80"
+  connection_type         = "VPC_LINK"
+  connection_id           = aws_apigatewayv2_vpc_link.main.id
+  payload_format_version  = "1.0"
+  timeout_milliseconds    = 30000
+  request_parameters      = {}
 }
