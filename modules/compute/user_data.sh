@@ -44,3 +44,9 @@ curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | \
 sudo apt-get update -y
 sudo apt-get install -y caddy
 
+# Run Watchtower to update running containers automatically
+sudo docker run -d \
+  --name watchtower \
+  --restart unless-stopped \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  containrrr/watchtower
