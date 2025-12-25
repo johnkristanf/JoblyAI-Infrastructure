@@ -24,6 +24,11 @@ variable "private_subnet_id" {
   type        = string
 }
 
+variable "public_subnet_id" {
+  description = "ID of the public subnet"
+  type        = string
+}
+
 variable "ec2_security_group_id" {
   description = "ID of the EC2 security group"
   type        = string

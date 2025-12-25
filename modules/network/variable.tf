@@ -19,3 +19,9 @@ variable "availability_zone" {
   description = "Availability zone for the public subnet"
   type        = string
 }
+
+variable "ec2_instance_id" {
+  description = "The ID of the EC2 instance"
+  type        = string
+}
+

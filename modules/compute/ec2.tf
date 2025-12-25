@@ -24,7 +24,7 @@ resource "aws_key_pair" "main" {
 resource "aws_instance" "main" {
   ami                         = data.aws_ami.main.id
   instance_type               = var.instance_type
-  subnet_id                   = var.private_subnet_id
+  subnet_id                   = var.public_subnet_id
   vpc_security_group_ids      = [var.ec2_security_group_id]
 
   associate_public_ip_address = false
