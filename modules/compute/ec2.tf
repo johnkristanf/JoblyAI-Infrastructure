@@ -27,7 +27,7 @@ resource "aws_instance" "main" {
   subnet_id                   = var.public_subnet_id
   vpc_security_group_ids      = [var.ec2_security_group_id]
 
-  associate_public_ip_address = false
+  iam_instance_profile = var.ec2_profile_name
 
   metadata_options {
     http_endpoint               = "enabled"

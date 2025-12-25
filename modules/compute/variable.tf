@@ -3,21 +3,15 @@ variable "environment" {
   type        = string
 }
 
-variable "api_versions" {
-  description = "List of API versions to support"
-  type        = list(string)
-}
-
-variable "backend_endpoint" {
-  description = "Backend EC2 endpoint (e.g., http://ec2-ip:8080)"
-  type        = string
-}
-
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
 }
 
+variable "ec2_profile_name" {
+  description = "EC2 profile name"
+  type        = string
+}
 
 variable "private_subnet_id" {
   description = "ID of the private subnet"

@@ -1,13 +1,12 @@
 # TLS Certification from ACM
 resource "aws_acm_certificate" "alb_cert" {
-  domain_name       = "api.mydomain.com"  # Replace with your domain
+  domain_name       = "api.notenexus.it.com"  # Replace with your domain
   validation_method = "DNS"
 
   tags = {
     Name = "alb-cert"
   }
 } 
-
 
 resource "aws_lb" "app_alb" {
   name               = "private-alb"

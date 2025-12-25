@@ -20,16 +20,26 @@ module "network" {
   ec2_instance_id = module.compute.ec2_instance_id
 }
 
+module "identity_compliance" {
+  source = "./modules/identity_compliance"
+  bucket_name = "joblyai-bucket"
+}
+
+module "object_storage" {
+  source = "./modules/object_storage"
+  environment = "production"
+  bucket_name = "joblyai-bucket"
+}
+
 module "compute" {
   source           = "./modules/compute"
   environment      = "production"
-  api_versions     = ["/api/v1", "/api/v2"]
-  backend_endpoint = "http://example-backend:8080"
   instance_type = "t2-micro"
   
   ec2_security_group_id = module.network.ec2_security_group_id
   private_subnet_id = module.network.private_subnet_id
   public_subnet_id = module.network.public_subnet_id
+  ec2_profile_name = module.identity_compliance.ec2_profile_name
 }
 
 module "integration" {
