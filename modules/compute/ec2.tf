@@ -29,12 +29,6 @@ resource "aws_instance" "main" {
 
   iam_instance_profile = var.ec2_profile_name
 
-  metadata_options {
-    http_endpoint               = "enabled"
-    http_tokens                 = "required"
-    http_put_response_hop_limit = 2
-  }
-
   # Recommended: specify a key name for SSH access
   key_name = aws_key_pair.main.key_name
 
@@ -47,6 +41,7 @@ resource "aws_instance" "main" {
 
   # Optional: add user_data for bootstrapping (cloud-init, etc.)
   user_data = file("${path.module}/user_data.sh")
+  
   tags = {
     Name = "main-ec2"
     Environment = var.environment
