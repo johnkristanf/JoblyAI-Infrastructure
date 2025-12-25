@@ -13,13 +13,16 @@ resource "aws_lb" "app_alb" {
   internal           = true
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = [aws_subnet.private.id]
+  # FIX: Must specify at least two subnets in different AZs
+  subnets            = [
+    aws_subnet.private.id,
+    aws_subnet.secondary_private.id
+  ]
 
   tags = {
     Name = "private-alb"
   }
 }
-
 
 # Target group
 resource "aws_lb_target_group" "alb_tg" {
@@ -70,6 +73,6 @@ resource "aws_lb_listener" "https_listener" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.app_tg.arn
+    target_group_arn = aws_lb_target_group.alb_tg.arn
   }
 }

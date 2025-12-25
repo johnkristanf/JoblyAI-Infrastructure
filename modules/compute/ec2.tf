@@ -43,7 +43,7 @@ resource "aws_instance" "main" {
   user_data = file("${path.module}/user_data.sh")
   
   tags = {
-    Name = "main-ec2"
+    Name = "joblyai-server"
     Environment = var.environment
   }
 }

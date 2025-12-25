@@ -16,7 +16,7 @@ resource "aws_apigatewayv2_vpc_link" "vpc_link" {
 resource "aws_apigatewayv2_integration" "alb_integration" {
   api_id = aws_apigatewayv2_api.main.id
   integration_type       = "HTTP_PROXY"
-  integration_uri        = "https://${aws_lb.app_alb.dns_name}"  # ALB DNS
+  integration_uri        = "https://${var.alb_dns_name}"  # ALB DNS
   connection_type        = "VPC_LINK"
   connection_id          = aws_apigatewayv2_vpc_link.vpc_link.id
   payload_format_version = "1.0"
@@ -24,13 +24,13 @@ resource "aws_apigatewayv2_integration" "alb_integration" {
 
 # Simple default route
 resource "aws_apigatewayv2_route" "default" {
-  api_id    = aws_apigatewayv2_api.api.id
+  api_id    = aws_apigatewayv2_api.main.id
   route_key = "ANY /{proxy+}"
   target    = "integrations/${aws_apigatewayv2_integration.alb_integration.id}"
 }
 
 resource "aws_apigatewayv2_stage" "default" {
-  api_id      = aws_apigatewayv2_api.api.id
+  api_id      = aws_apigatewayv2_api.main.id
   name        = "$default"
   auto_deploy = true
 }
