@@ -28,5 +28,4 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plug
 sudo systemctl enable docker
 sudo systemctl start docker
 
-# Optionally add current user to docker group (for convenience, not required for root or in a script)
-sudo usermod -aG docker $USER
+sudo usermod -aG docker ubuntu # expected user name because of the choosen ami

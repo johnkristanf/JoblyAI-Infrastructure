@@ -8,7 +8,10 @@ resource "aws_apigatewayv2_api" "main" {
 # VPC Link (needed to connect API Gateway to ALB)
 resource "aws_apigatewayv2_vpc_link" "vpc_link" {
   name        = "api-to-alb-vpc-link"
-  subnet_ids  = [var.private_subnet_id]
+  subnet_ids  = [
+    var.private_subnet_id, 
+    var.secondary_private_id
+  ]
   security_group_ids = [var.alb_security_group_id]
 }
 
@@ -17,7 +20,7 @@ resource "aws_apigatewayv2_integration" "alb_integration" {
   api_id = aws_apigatewayv2_api.main.id
   
   integration_type       = "HTTP_PROXY"
-  integration_uri        = var.alb_http_listener_arn
+  integration_uri        = var.alb_http_listener_arn # Must change to alb dns instead
 
   connection_type        = "VPC_LINK"
   connection_id          = aws_apigatewayv2_vpc_link.vpc_link.id

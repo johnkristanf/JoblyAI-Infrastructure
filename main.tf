@@ -46,5 +46,6 @@ module "integration" {
   environment      = "production"
   alb_security_group_id = module.network.alb_security_group_id
   private_subnet_id = module.network.private_subnet_id
+  secondary_private_id = module.network.secondary_private_subnet_id
   alb_http_listener_arn = module.network.alb_http_listener_arn 
 }

@@ -8,6 +8,11 @@ variable "private_subnet_id" {
   type        = string
 }
 
+variable "secondary_private_id" {
+  description = "Secondary id of the private subnet"
+  type        = string
+}
+
 variable "alb_security_group_id" {
   description = "ID of the ALB security group"
   type        = string
