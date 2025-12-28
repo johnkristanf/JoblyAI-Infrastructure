@@ -24,7 +24,7 @@ output "alb_security_group_id" {
   value       = aws_security_group.alb_sg.id
 }
 
-output "alb_dns_name" {
-  description = "DNS name of the ALB"
-  value       = aws_lb.app_alb.dns_name
+output "alb_http_listener_arn" {
+  description = "ALB's HTTP listener resource name"
+  value       = aws_lb_listener.http_listener.arn
 }

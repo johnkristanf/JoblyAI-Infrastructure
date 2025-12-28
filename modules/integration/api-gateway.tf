@@ -1,6 +1,6 @@
 
 resource "aws_apigatewayv2_api" "main" {
-  name          = "backend-http-api-${var.environment}"
+  name          = "joblyai-http-api-${var.environment}"
   protocol_type = "HTTP"
 }
 
@@ -15,11 +15,15 @@ resource "aws_apigatewayv2_vpc_link" "vpc_link" {
 # Integration: API Gateway → ALB
 resource "aws_apigatewayv2_integration" "alb_integration" {
   api_id = aws_apigatewayv2_api.main.id
+  
   integration_type       = "HTTP_PROXY"
-  integration_uri        = "https://${var.alb_dns_name}"  # ALB DNS
+  integration_uri        = var.alb_http_listener_arn
+
   connection_type        = "VPC_LINK"
   connection_id          = aws_apigatewayv2_vpc_link.vpc_link.id
   payload_format_version = "1.0"
+
+  integration_method = "ANY"
 }
 
 # Simple default route

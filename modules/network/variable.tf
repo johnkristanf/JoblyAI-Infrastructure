@@ -4,9 +4,16 @@ variable "vpc_cidr_block" {
   default     = "10.0.0.0/16"
 }
 
-variable "availability_zone" {
-  description = "Availability zone for the public subnet"
+variable "primary_availability_zone" {
+  description = "Primary availability zone for both public and private subnet"
   type        = string
+  default     = "ap-southeast-1a"
+}
+
+variable "secondary_availability_zone" {
+  description = "Secondary availability zone for private subnet"
+  type        = string
+  default     = "ap-southeast-1b"
 }
 
 variable "ec2_instance_id" {

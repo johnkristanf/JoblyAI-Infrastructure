@@ -13,7 +13,7 @@ variable "alb_security_group_id" {
   type        = string
 }
 
-variable "alb_dns_name" {
-  description = "DNS name of the ALB"
+variable "alb_http_listener_arn" {
+  description = "ALB's HTTP listener resource name"
   type        = string
 }
