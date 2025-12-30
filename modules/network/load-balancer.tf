@@ -1,13 +1,3 @@
-# TLS Certification from ACM
-# resource "aws_acm_certificate" "alb_cert" {
-#   domain_name       = "api.notenexus.it.com"  # Replace with your domain
-#   validation_method = "DNS"
-
-#   tags = {
-#     Name = "alb-acm-certificate"
-#   }
-# } 
-
 resource "aws_lb" "app_alb" {
   name               = "private-alb"
   internal           = true
@@ -60,31 +50,3 @@ resource "aws_lb_listener" "http_listener" {
     target_group_arn = aws_lb_target_group.alb_tg.arn
   }
 }
-
-# resource "aws_lb_listener" "http_listener" {
-#   load_balancer_arn = aws_lb.app_alb.arn
-#   port              = 80
-#   protocol          = "HTTP"
-
-#   default_action {        # Redirect http (80) traffic to https (443)
-#     type = "redirect"
-#     redirect {
-#       port        = "443"
-#       protocol    = "HTTPS"
-#       status_code = "HTTP_301"
-#     }
-#   }
-# }
-
-# resource "aws_lb_listener" "https_listener" {
-#   load_balancer_arn = aws_lb.app_alb.arn
-#   port              = 443
-#   protocol          = "HTTPS"
-#   ssl_policy        = "ELBSecurityPolicy-2016-08"
-#   certificate_arn   = aws_acm_certificate.alb_cert.arn
-
-#   default_action {
-#     type             = "forward"
-#     target_group_arn = aws_lb_target_group.alb_tg.arn
-#   }
-# }
