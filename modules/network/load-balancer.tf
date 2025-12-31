@@ -4,6 +4,8 @@ resource "aws_lb" "app_alb" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
 
+  idle_timeout = 120
+
   subnets            = [
     aws_subnet.private.id,
     aws_subnet.secondary_private.id
