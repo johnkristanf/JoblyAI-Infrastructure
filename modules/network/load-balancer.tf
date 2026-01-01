@@ -25,13 +25,13 @@ resource "aws_lb_target_group" "alb_tg" {
   load_balancing_cross_zone_enabled = false
 
   health_check {
-    interval            = 30
-    path                = "/"
-    protocol            = "HTTP"
-    healthy_threshold   = 2
+    path = "/health"  # matches your FastAPI /health route
+    timeout = 20      # give FastAPI some breathing room
+    interval = 30
+    healthy_threshold = 2
     unhealthy_threshold = 2
-    timeout             = 5
   }
+
 }
 
 # Attach EC2 to target group
